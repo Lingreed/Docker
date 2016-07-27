@@ -1,0 +1,7 @@
+spring:
+  rabbitmq:
+    host: rabbitmq
+  redis:
+    host: redis
+  datasource:
+    url: jdbc:mysql://mysql:3306/im?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&failOverReadOnly=false&maxReconnects=10

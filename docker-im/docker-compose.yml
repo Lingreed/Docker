@@ -1,0 +1,83 @@
+version: '2'
+services:
+  api:
+    build: ./api
+    container_name: api-ct
+    restart: always
+    ports:
+     - "20001:20001"
+    links:
+     - mysql:mysql
+     - rabbitmq:rabbitmq
+     - redis:redis
+    volumes:
+     - /apps/projects/logs:/apps/projects/logs
+     - /apps/projects/launchrAttachment:/apps/projects/launchrAttachment
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "100"
+  
+  ws:
+    build: ./ws
+    container_name: ws-ct
+    restart: always
+    ports:
+     - "20000:20000"
+    links:
+     - rabbitmq:rabbitmq
+    volumes:
+     - /apps/projects/logs:/apps/projects/logs
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "100"
+
+  mqcenter:
+    build: ./mq
+    container_name: mq-ct
+    restart: always
+    links:
+     - mysql:mysql
+     - redis:redis
+     - rabbitmq:rabbitmq
+    volumes:
+     - /apps/projects/logs:/apps/projects/logs
+     - /apps/projects/mqcenter/cert:/apps/projects/mqcenter/cert
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "100"
+
+  mysql:
+    build: ./mysql
+    container_name: mysql-ct
+    restart: always
+    volumes:
+     - /apps/mysql/data:/var/lib/mysql
+    ports:
+     - "3306:3306"
+    environment:
+     - MYSQL_ROOT_PASSWORD=p@ssw0rd 
+
+  redis:
+    build: ./redis
+    container_name: redis-ct
+    restart: always
+    ports:
+     - "6379:6379"
+    volumes:
+     - /var/lib/redis:/data
+    command: ["redis-server","/usr/local/etc/redis/redis.conf","--appendonly","yes"]
+ 
+  rabbitmq:
+    build: ./rabbitmq
+    container_name: rabbitmq-ct
+    restart: always
+    hostname: my-rabbit
+    ports:
+     - "5672:5672"
+     - "15672:15672"

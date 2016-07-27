@@ -1,0 +1,6 @@
+netty:
+  inetHost: 192.168.109.132
+amqp:
+  hostName: rabbitmq
+keyword:
+  url: http://192.168.109.132:20001/launchr/wordfilter/listAll
